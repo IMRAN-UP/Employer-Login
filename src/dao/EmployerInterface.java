@@ -8,4 +8,6 @@ public interface EmployerInterface {
     boolean updateEmployer(Employer employer);
     boolean deleteEmployer(int id);
     List<Employer> getAllEmployers();
+    int isValidPassword(String username, String password);
+    boolean isAdmin(int employee_id);
 }

@@ -25,7 +25,7 @@ public class FormFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(listPanel);
         add(scrollPane, BorderLayout.CENTER);
 
-        setVisible(true);
+        setVisible(false);
     }
 
     public InputPanel getInPanel() {
@@ -38,5 +38,10 @@ public class FormFrame extends JFrame {
 
     public ListPanel getListPanel() {
         return listPanel;
+    }
+
+    public void handleAdmin() {
+        remove(inPanel);
+        remove(btnPanel);
     }
 }

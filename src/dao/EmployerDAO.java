@@ -1,5 +1,8 @@
 package dao;
 
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +79,7 @@ public class EmployerDAO implements EmployerInterface {
     }
 
     @Override
+
     public List<Employer> getAllEmployers() {
         List<Employer> employers = new ArrayList<>();
         try (ResultSet getResult = connection.prepareStatement("SELECT * FROM employers").executeQuery()) {
@@ -98,4 +102,63 @@ public class EmployerDAO implements EmployerInterface {
         }
         return employers;
     }
+
+    @Override
+    public int isValidPassword(String username, String password) {
+        try (PreparedStatement loginStatement = connection.prepareStatement("SELECT * FROM login WHERE username = ?")) {
+            loginStatement.setString(1, username);
+
+            ResultSet getResult = loginStatement.executeQuery();
+            if (getResult.next() && getResult.getString("password").equals(hashPassword(password))) { 
+                return getResult.getInt("employee_id");
+            }
+            return -1;
+        }catch (SQLException getException) {
+            getException.printStackTrace();
+            return -1;
+        }
+    }
+
+    public boolean isAdmin(int employer_id) {
+        try (PreparedStatement loginStatement = connection.prepareStatement("SELECT * FROM employers WHERE id = ?")) {
+            loginStatement.setString(1, String.valueOf(employer_id));
+
+            ResultSet getResult = loginStatement.executeQuery();
+            if (getResult.next()) { 
+                return getResult.getString("role").equals("MANAGER");
+            }
+            return false;
+        }catch (SQLException getException) {
+            getException.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean createLogin(int employee_id, String username, String password) {
+        try (PreparedStatement createLoginStatement = connection.prepareStatement("INSERT INTO login (username, password, employee_id) VALUES (?, ?, ?)")) {
+            createLoginStatement.setString(1, username);
+            createLoginStatement.setString(2, hashPassword(password));
+            createLoginStatement.setString(3, String.valueOf(employee_id));
+
+            return createLoginStatement.executeUpdate() > 0;
+        }catch (SQLException getException) {
+            getException.printStackTrace();
+            return false;
+        }
+    }
+
+
+    private static String hashPassword(String password) {
+        try {
+            byte[] encodedHash = MessageDigest.getInstance("SHA-256").digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : encodedHash) {
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error: SHA-256 Algorithm not found!", e);
+        }
+    }
+
 }

@@ -72,4 +72,18 @@ public class InputPanel extends JPanel {
     public Poste getSelectedPoste() {
         return (Poste) posteField.getSelectedItem();
     }
+
+    public void clearFields() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        emailField.setText("");
+        telephoneNumberField.setText("");
+        salaryField.setText("");
+        roleField.setSelectedIndex(0);
+        posteField.setSelectedIndex(0);
+    }
+
+    public void setFields (String[] fields) {
+        
+    }
 }

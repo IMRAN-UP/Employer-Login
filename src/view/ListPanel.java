@@ -19,12 +19,13 @@ public class ListPanel extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(1, 5));
+        titlePanel.setLayout(new GridLayout(1, 6));
         titlePanel.add(new JLabel("Id", SwingConstants.CENTER));
         titlePanel.add(new JLabel("Nom", SwingConstants.CENTER));
         titlePanel.add(new JLabel("Prenom", SwingConstants.CENTER));
         titlePanel.add(new JLabel("Email", SwingConstants.CENTER));
         titlePanel.add(new JLabel("Salaire", SwingConstants.CENTER));
+        titlePanel.add(new JLabel("Phone Number", SwingConstants.CENTER));
         titlePanel.setBorder(new LineBorder(Color.BLACK));
         add(titlePanel, BorderLayout.NORTH);
 
@@ -39,7 +40,7 @@ public class ListPanel extends JPanel {
         rowPanels.clear();
 
         for (Employer employer : employers) {
-            JPanel rowPanel = new JPanel(new GridLayout(1, 5));
+            JPanel rowPanel = new JPanel(new GridLayout(1, 6));
             rowPanel.setBorder(new LineBorder(Color.GRAY));
             rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
@@ -48,6 +49,7 @@ public class ListPanel extends JPanel {
             JLabel firstNameLabel = new JLabel(employer.getFirstName(), SwingConstants.CENTER);
             JLabel emailLabel = new JLabel(employer.getEmail(), SwingConstants.CENTER);
             JLabel salaryLabel = new JLabel(String.valueOf(employer.getSalary()), SwingConstants.CENTER);
+            JLabel phoneNumberLabel = new JLabel(String.valueOf(employer.getPhoneNumber()), SwingConstants.CENTER);
 
             rowPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -61,6 +63,7 @@ public class ListPanel extends JPanel {
             rowPanel.add(firstNameLabel);
             rowPanel.add(emailLabel);
             rowPanel.add(salaryLabel);
+            rowPanel.add(phoneNumberLabel);
 
             contentPanel.add(rowPanel);
             rowPanels.add(rowPanel);

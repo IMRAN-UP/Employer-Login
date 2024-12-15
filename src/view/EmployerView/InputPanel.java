@@ -2,8 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import enums.Role; 
-import enums.Poste; 
+import enums.*;
 
 public class InputPanel extends JPanel {
 
@@ -15,6 +14,7 @@ public class InputPanel extends JPanel {
         setLayout(new GridLayout(7, 2, 5, 5));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+        setLayout(new GridLayout(7, 2, 5, 5));
         firstNameField = new JTextField(15);
         lastNameField = new JTextField(15);
         emailField = new JTextField(15);
@@ -73,6 +73,7 @@ public class InputPanel extends JPanel {
         return (Poste) posteField.getSelectedItem();
     }
 
+
     public void clearFields() {
         firstNameField.setText("");
         lastNameField.setText("");
@@ -83,7 +84,4 @@ public class InputPanel extends JPanel {
         posteField.setSelectedIndex(0);
     }
 
-    public void setFields (String[] fields) {
-        
-    }
 }

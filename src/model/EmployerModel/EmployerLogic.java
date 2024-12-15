@@ -1,5 +1,7 @@
 package model;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import enums.*;
 import dao.EmployerDAO;
 import java.util.List;
@@ -22,7 +24,7 @@ public class EmployerLogic {
             return false;
         }
 
-        return dao.addEmployer( new Employer(
+        return dao.add( new Employer(
                 id,
                 firstName,
                 lastName,
@@ -34,13 +36,12 @@ public class EmployerLogic {
         ));
     }
 
-
     public boolean updateEmployer(int id, String firstName, String lastName, String email, int phoneNumber, double salary, Role role, Poste poste) {
 
 
         if ( isValidEmail(email) ) {
 
-            return dao.updateEmployer(new Employer(
+            return dao.update(new Employer(
                 id,
                 firstName,
                 lastName,
@@ -55,17 +56,17 @@ public class EmployerLogic {
         return false;
     }
 
-    public int isValidLogin(String username, String password) {
-        return dao.isValidPassword(username, password);
+    public boolean handleLogin(String username, String password) {
+        return (null == dao.getPassword(username) || !dao.getPassword(username).equals(hashPassword(password))) ? false : true;
     }
 
-    public boolean isAdmin(int id) {
-        return dao.isAdmin(id);
+    public boolean handleAccess(String username) {
+        return (null == dao.getRole(username) || !dao.getRole(username).equals("MANAGER")) ? false : true ;
     }
 
     public boolean createLogin(int id, String username, String password, String confirmPassword) {
         if( !password.equals(confirmPassword) || username.length() == 0 || password.length() == 0 || confirmPassword.length() == 0 ) return false;
-        return dao.createLogin(id, username, password);
+        return dao.createLogin(id, username, hashPassword(password));
     }
 
     private boolean isValidEmail(String email) {
@@ -85,10 +86,23 @@ public class EmployerLogic {
     }
 
     public boolean deleteEmployer(int id) {
-        return dao.deleteEmployer(id);
+        return dao.delete(id);
     }
 
     public List<Employer> getAllEmployers() {
-        return dao.getAllEmployers();
+        return dao.getAll();
+    }
+
+    private static String hashPassword(String password) {
+        try {
+            byte[] encodedHash = MessageDigest.getInstance("SHA-256").digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : encodedHash) {
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error: SHA-256 Algorithm not found!", e);
+        }
     }
 }

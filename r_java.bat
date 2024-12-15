@@ -1,1 +1,1 @@
-java -cp "bin;lib/mysql-connector-java-8.0.25.jar" Main
+java -cp "bin;lib/postgresql-42.7.4.jar" Main

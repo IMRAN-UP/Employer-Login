@@ -5,27 +5,28 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import model.Employer;
+import model.Holiday;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-public class ListPanel extends JPanel {
+public class HoliListPanel extends JPanel {
 
     private JPanel contentPanel;
     private int selectedRowId = -1;
     private List<JPanel> rowPanels = new ArrayList<>();
 
-    public ListPanel() {
+    public HoliListPanel() {
         setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(1, 6));
+        titlePanel.setLayout(new GridLayout(1, 5));
         titlePanel.add(new JLabel("Id", SwingConstants.CENTER));
         titlePanel.add(new JLabel("Nom", SwingConstants.CENTER));
-        titlePanel.add(new JLabel("Prenom", SwingConstants.CENTER));
-        titlePanel.add(new JLabel("Email", SwingConstants.CENTER));
-        titlePanel.add(new JLabel("Salaire", SwingConstants.CENTER));
-        titlePanel.add(new JLabel("Phone Number", SwingConstants.CENTER));
+        titlePanel.add(new JLabel("Start Date", SwingConstants.CENTER));
+        titlePanel.add(new JLabel("End Date", SwingConstants.CENTER));
+        titlePanel.add(new JLabel("Holiday Type", SwingConstants.CENTER));
         titlePanel.setBorder(new LineBorder(Color.BLACK));
         add(titlePanel, BorderLayout.NORTH);
 
@@ -35,35 +36,34 @@ public class ListPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    public void updateEmployerList(List<Employer> employers) {
+    public void updateHolidayList(List<Holiday> Holidays) {
         contentPanel.removeAll();
         rowPanels.clear();
 
-        for (Employer employer : employers) {
-            JPanel rowPanel = new JPanel(new GridLayout(1, 6));
+        for (Holiday Holiday : Holidays) {
+            JPanel rowPanel = new JPanel(new GridLayout(1, 5));
             rowPanel.setBorder(new LineBorder(Color.GRAY));
             rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-            JLabel idLabel = new JLabel(String.valueOf(employer.getId()), SwingConstants.CENTER);
-            JLabel lastNameLabel = new JLabel(employer.getLastName(), SwingConstants.CENTER);
-            JLabel firstNameLabel = new JLabel(employer.getFirstName(), SwingConstants.CENTER);
-            JLabel emailLabel = new JLabel(employer.getEmail(), SwingConstants.CENTER);
-            JLabel salaryLabel = new JLabel(String.valueOf(employer.getSalary()), SwingConstants.CENTER);
-            JLabel phoneNumberLabel = new JLabel(String.valueOf(employer.getPhoneNumber()), SwingConstants.CENTER);
+            JLabel idLabel = new JLabel(String.valueOf(Holiday.getId()), SwingConstants.CENTER);
+            JLabel fullNameLabel = new JLabel(Holiday.getFullName(), SwingConstants.CENTER);
+            JLabel startDateLabel = new JLabel(Holiday.getStartDate().format(formatter), SwingConstants.CENTER);
+            JLabel endDateLabel = new JLabel(Holiday.getEndDate().format(formatter), SwingConstants.CENTER);
+            JLabel HoliTypeLabel = new JLabel(String.valueOf(Holiday.getHolidayType()), SwingConstants.CENTER);
 
             rowPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    highlightRow(rowPanel, employer.getId());
+                    highlightRow(rowPanel, Holiday.getId());
                 }
             });
 
             rowPanel.add(idLabel);
-            rowPanel.add(lastNameLabel);
-            rowPanel.add(firstNameLabel);
-            rowPanel.add(emailLabel);
-            rowPanel.add(salaryLabel);
-            rowPanel.add(phoneNumberLabel);
+            rowPanel.add(fullNameLabel);
+            rowPanel.add(startDateLabel);
+            rowPanel.add(endDateLabel);
+            rowPanel.add(HoliTypeLabel);
 
             contentPanel.add(rowPanel);
             rowPanels.add(rowPanel);
@@ -73,13 +73,13 @@ public class ListPanel extends JPanel {
         contentPanel.repaint();
     }
 
-    private void highlightRow(JPanel selectedRow, int employerId) {
+    private void highlightRow(JPanel selectedRow, int HolidayId) {
         for (JPanel row : rowPanels) {
             row.setBackground(Color.WHITE);
         }
 
         selectedRow.setBackground(Color.LIGHT_GRAY);
-        selectedRowId = employerId;
+        selectedRowId = HolidayId;
     }
 
     public int getSelectedRowId() {

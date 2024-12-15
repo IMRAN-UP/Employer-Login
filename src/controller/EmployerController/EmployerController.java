@@ -14,19 +14,19 @@ public class EmployerController {
     private EmployerLogic employerLogic;
     private CreateFrame createFrame;
 
-    public EmployerController(LoginFrame loginFrame, EmployerLogic employerLogic) {
+    public EmployerController(FormFrame frame, EmployerLogic employerLogic) {
+        this.loginFrame = new LoginFrame();
         this.employerLogic = employerLogic;
-        this.loginFrame = loginFrame;
-        this.frame = new FormFrame();
+        this.frame = frame;
         this.createFrame = new CreateFrame();
 
-        frame.getBtnPanel().getAddBtn().addActionListener(addEvent -> addEmployer());
-        frame.getBtnPanel().getUpdateBtn().addActionListener(updateEvent -> updateEmployer());
-        frame.getBtnPanel().getRemoveBtn().addActionListener(deleteEvent -> deleteEmployer());
-        frame.getBtnPanel().getCreateBtn().addActionListener(createEvent -> createEmployer());
+        frame.getEmployerPanel().getBtnPanel().getAddBtn().addActionListener(addEvent -> addEmployer());
+        frame.getEmployerPanel().getBtnPanel().getUpdateBtn().addActionListener(updateEvent -> updateEmployer());
+        frame.getEmployerPanel().getBtnPanel().getRemoveBtn().addActionListener(deleteEvent -> deleteEmployer());
+        frame.getEmployerPanel().getBtnPanel().getCreateBtn().addActionListener(createEvent -> createEmployer());
         createFrame.getCreateBtn().addActionListener(createEvent -> createLogin());
-
         loginFrame.getLoginButton().addActionListener(addEvent -> isValidLogin());
+
         loadEmployers();
     }
 
@@ -35,18 +35,18 @@ public class EmployerController {
             
             if (employerLogic.addEmployer(
                     1,
-                    frame.getInPanel().getFirstNameField().getText(),
-                    frame.getInPanel().getLastNameField().getText(),
-                    frame.getInPanel().getEmailField().getText(),
-                    Integer.parseInt(frame.getInPanel().getTelephoneNumberField().getText()),
-                    Double.parseDouble(frame.getInPanel().getSalaryField().getText()),
-                    Role.valueOf(frame.getInPanel().getSelectedRole().toString()),
-                    Poste.valueOf(frame.getInPanel().getSelectedPoste().toString())
+                    frame.getEmployerPanel().getInPanel().getFirstNameField().getText(),
+                    frame.getEmployerPanel().getInPanel().getLastNameField().getText(),
+                    frame.getEmployerPanel().getInPanel().getEmailField().getText(),
+                    Integer.parseInt(frame.getEmployerPanel().getInPanel().getTelephoneNumberField().getText()),
+                    Double.parseDouble(frame.getEmployerPanel().getInPanel().getSalaryField().getText()),
+                    Role.valueOf(frame.getEmployerPanel().getInPanel().getSelectedRole().toString()),
+                    Poste.valueOf(frame.getEmployerPanel().getInPanel().getSelectedPoste().toString())
                 ))    
             {
                 JOptionPane.showMessageDialog(frame, "Employer added successfully.");
                 loadEmployers();
-                frame.getInPanel().clearFields();
+                frame.getEmployerPanel().getInPanel().clearFields();
             } else {
                 JOptionPane.showMessageDialog(null, "Failed to add employer", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -58,19 +58,19 @@ public class EmployerController {
     private void updateEmployer() {
      try {
          if (employerLogic.updateEmployer(
-                 frame.getListPanel().getSelectedRowId(),
-                 frame.getInPanel().getFirstNameField().getText(),
-                 frame.getInPanel().getLastNameField().getText(),
-                 frame.getInPanel().getEmailField().getText(),
-                 Integer.parseInt(frame.getInPanel().getTelephoneNumberField().getText()),
-                 Double.parseDouble(frame.getInPanel().getSalaryField().getText()),
-                 Role.valueOf(frame.getInPanel().getSelectedRole().toString()),
-                 Poste.valueOf(frame.getInPanel().getSelectedPoste().toString())
+                 frame.getEmployerPanel().getListPanel().getSelectedRowId(),
+                 frame.getEmployerPanel().getInPanel().getFirstNameField().getText(),
+                 frame.getEmployerPanel().getInPanel().getLastNameField().getText(),
+                 frame.getEmployerPanel().getInPanel().getEmailField().getText(),
+                 Integer.parseInt(frame.getEmployerPanel().getInPanel().getTelephoneNumberField().getText()),
+                 Double.parseDouble(frame.getEmployerPanel().getInPanel().getSalaryField().getText()),
+                 Role.valueOf(frame.getEmployerPanel().getInPanel().getSelectedRole().toString()),
+                 Poste.valueOf(frame.getEmployerPanel().getInPanel().getSelectedPoste().toString())
             )) 
          {
             JOptionPane.showMessageDialog(frame, "Employer updated successfully.");
             loadEmployers();
-            frame.getInPanel().clearFields();
+            frame.getEmployerPanel().getInPanel().clearFields();
          } else {
             JOptionPane.showMessageDialog(null, "Failed to update employer", "Error", JOptionPane.ERROR_MESSAGE);
          }
@@ -81,10 +81,10 @@ public class EmployerController {
 
     private void deleteEmployer() {
      try {
-         if (employerLogic.deleteEmployer(frame.getListPanel().getSelectedRowId())) {
+         if (employerLogic.deleteEmployer(frame.getEmployerPanel().getListPanel().getSelectedRowId())) {
             JOptionPane.showMessageDialog(frame, "Employer deleted successfully.");
             loadEmployers();
-            frame.getInPanel().clearFields();
+            frame.getEmployerPanel().getInPanel().clearFields();
          } else {
             JOptionPane.showMessageDialog(null, "Failed to delete employer", "Error", JOptionPane.ERROR_MESSAGE);
          }
@@ -94,16 +94,15 @@ public class EmployerController {
     }
 
     private void loadEmployers() {
-        frame.getListPanel().updateEmployerList(employerLogic.getAllEmployers());
+        frame.getEmployerPanel().getListPanel().updateEmployerList(employerLogic.getAllEmployers());
     }
 
     private void isValidLogin() {
-        int loginId = employerLogic.isValidLogin(loginFrame.getUsername(), loginFrame.getPassword());
-        if( loginId > 0) {
+        if(employerLogic.handleLogin(loginFrame.getUsername(), loginFrame.getPassword())) {
             loginFrame.setVisible(false);
             frame.setVisible(true);
-            if (!employerLogic.isAdmin(loginId)){
-                frame.handleAdmin();
+            if (!employerLogic.handleAccess(loginFrame.getUsername())){
+                System.out.println("This is Employer");
             }
             return;
         }else {
@@ -112,16 +111,15 @@ public class EmployerController {
     }
 
     private void createEmployer() {
-        if (frame.getListPanel().getSelectedRowId() != -1) {
+        if (frame.getEmployerPanel().getListPanel().getSelectedRowId() != -1) {
             createFrame.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Failed Create Login Please select a row ", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-
     private void createLogin () {
-        if( employerLogic.createLogin(frame.getListPanel().getSelectedRowId(), createFrame.getUsername(), createFrame.getPassword(), createFrame.getConfirmPassword()) ) {
+        if( employerLogic.createLogin(frame.getEmployerPanel().getListPanel().getSelectedRowId(), createFrame.getUsername(), createFrame.getPassword(), createFrame.getConfirmPassword()) ) {
             JOptionPane.showMessageDialog(frame, "Login created successfully.");
             createFrame.clearFields();
             createFrame.setVisible(false);
@@ -129,5 +127,4 @@ public class EmployerController {
             JOptionPane.showMessageDialog(null, "Failed Create Login", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 }

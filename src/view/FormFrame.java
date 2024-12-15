@@ -5,43 +5,31 @@ import java.awt.*;
 
 public class FormFrame extends JFrame {
 
-    private InputPanel inPanel;
-    private BtnPanel btnPanel;
-    private ListPanel listPanel;
+    private EmployerPanel employerPanel;
+    private HolidayPanel holidayPanel;
+    private SwitchPanel switchPanel;
 
     public FormFrame() {
-        setTitle("Person Form");
-        setSize(800, 600);
+        
+        setTitle("Employer Platform");
+        setSize(900, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
-        inPanel = new InputPanel();
-        btnPanel = new BtnPanel();
-        listPanel = new ListPanel();
-
-        add(inPanel, BorderLayout.NORTH);
-        add(btnPanel, BorderLayout.SOUTH);
-
-        JScrollPane scrollPane = new JScrollPane(listPanel);
-        add(scrollPane, BorderLayout.CENTER);
-
+    
+        employerPanel = new EmployerPanel();
+        holidayPanel = new HolidayPanel();
+        switchPanel = new SwitchPanel(employerPanel, holidayPanel);
+        add(switchPanel, BorderLayout.CENTER);
+        
         setVisible(false);
     }
 
-    public InputPanel getInPanel() {
-        return inPanel;
+    public EmployerPanel getEmployerPanel() {
+        return employerPanel;
     }
 
-    public BtnPanel getBtnPanel() {
-        return btnPanel;
+    public HolidayPanel getHolidayPanel() {
+        return holidayPanel;
     }
 
-    public ListPanel getListPanel() {
-        return listPanel;
-    }
-
-    public void handleAdmin() {
-        remove(inPanel);
-        remove(btnPanel);
-    }
 }

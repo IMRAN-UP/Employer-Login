@@ -1,12 +1,11 @@
 package view;
+
 import javax.swing.*;
 import java.awt.*;
-import dao.*;
-
 
 public class CreateFrame extends JFrame {
     private JTextField usernameField;
-    private JPasswordField passwordField , confirmPasswordField;
+    private JPasswordField passwordField, confirmPasswordField;
     private JButton createBtn;
 
     public CreateFrame() {
@@ -37,25 +36,21 @@ public class CreateFrame extends JFrame {
 
         btnPanel.add(createBtn);
 
-
         add(inputPanel, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
-
-
         setVisible(false);
     }
-
 
     public String getUsername() {
         return usernameField.getText();
     }
 
     public String getPassword() {
-        return passwordField.getText();
+        return new String(passwordField.getPassword());
     }
 
     public String getConfirmPassword() {
-        return confirmPasswordField.getText();
+        return new String(confirmPasswordField.getPassword());
     }
 
     public JButton getCreateBtn() {

@@ -1,8 +1,5 @@
 package dao;
 
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +7,7 @@ import model.Employer;
 import enums.Role;
 import enums.Poste;
 
-public class EmployerDAO implements EmployerInterface {
+public class EmployerDAO implements InterfaceDAO<Employer> {
 
     private Connection connection;
 
@@ -22,9 +19,8 @@ public class EmployerDAO implements EmployerInterface {
         }
     }
 
-
     @Override
-    public boolean addEmployer(Employer employer) {
+    public boolean add(Employer employer) {
         try (PreparedStatement addStatement = connection.prepareStatement(
             "INSERT INTO employers (first_name, last_name, email, phone, salary, role, poste) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
 
@@ -44,9 +40,8 @@ public class EmployerDAO implements EmployerInterface {
         }
     }
 
-
     @Override
-    public boolean updateEmployer(Employer employer) {
+    public boolean update(Employer employer) {
         try (PreparedStatement updateStatement = connection.prepareStatement("UPDATE employers SET first_name = ?, last_name = ?, email = ?, phone = ?, salary = ?, role = ?, poste = ? WHERE id = ?")) {
 
             updateStatement.setString(1, employer.getFirstName());
@@ -67,20 +62,20 @@ public class EmployerDAO implements EmployerInterface {
     }
 
     @Override
-    public boolean deleteEmployer(int id) {
+    public boolean delete(int id) {
         try (PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM employers WHERE id = ?")) {
 
             deleteStatement.setInt(1, id);
             return deleteStatement.executeUpdate() > 0;
 
         } catch (SQLException deleteException) {
+            deleteException.printStackTrace();
             return false;
         }
     }
 
     @Override
-
-    public List<Employer> getAllEmployers() {
+    public List<Employer> getAll() {
         List<Employer> employers = new ArrayList<>();
         try (ResultSet getResult = connection.prepareStatement("SELECT * FROM employers").executeQuery()) {
 
@@ -104,61 +99,53 @@ public class EmployerDAO implements EmployerInterface {
     }
 
     @Override
-    public int isValidPassword(String username, String password) {
+    public String getPassword(String username) {
         try (PreparedStatement loginStatement = connection.prepareStatement("SELECT * FROM login WHERE username = ?")) {
             loginStatement.setString(1, username);
-
             ResultSet getResult = loginStatement.executeQuery();
-            if (getResult.next() && getResult.getString("password").equals(hashPassword(password))) { 
-                return getResult.getInt("employee_id");
-            }
-            return -1;
-        }catch (SQLException getException) {
-            getException.printStackTrace();
-            return -1;
-        }
-    }
 
-    public boolean isAdmin(int employer_id) {
-        try (PreparedStatement loginStatement = connection.prepareStatement("SELECT * FROM employers WHERE id = ?")) {
-            loginStatement.setString(1, String.valueOf(employer_id));
-
-            ResultSet getResult = loginStatement.executeQuery();
             if (getResult.next()) { 
-                return getResult.getString("role").equals("MANAGER");
+                return getResult.getString("password");
             }
-            return false;
-        }catch (SQLException getException) {
+
+            return null;
+        } catch (SQLException getException) {
             getException.printStackTrace();
-            return false;
+            return null;
         }
     }
 
+    @Override
+    public String getRole(String username) {
+        try (PreparedStatement loginStatement = connection.prepareStatement(
+            "SELECT employers.role FROM login JOIN employers ON login.employer_id = employers.id WHERE login.username = ?"
+        )) {
+            loginStatement.setString(1, username);
+            ResultSet getResult = loginStatement.executeQuery();
+    
+            return (getResult.next()) ? getResult.getString("role") : null ;
+        } catch (SQLException getException) {
+            getException.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public boolean createLogin(int employee_id, String username, String password) {
-        try (PreparedStatement createLoginStatement = connection.prepareStatement("INSERT INTO login (username, password, employee_id) VALUES (?, ?, ?)")) {
+        try (PreparedStatement createLoginStatement = connection.prepareStatement("INSERT INTO login (username, password, employer_id) VALUES (?, ?, ?)")) {
             createLoginStatement.setString(1, username);
-            createLoginStatement.setString(2, hashPassword(password));
-            createLoginStatement.setString(3, String.valueOf(employee_id));
+            createLoginStatement.setString(2, password);
+            createLoginStatement.setInt(3, employee_id);
 
             return createLoginStatement.executeUpdate() > 0;
-        }catch (SQLException getException) {
+        } catch (SQLException getException) {
             getException.printStackTrace();
             return false;
         }
     }
 
-
-    private static String hashPassword(String password) {
-        try {
-            byte[] encodedHash = MessageDigest.getInstance("SHA-256").digest(password.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : encodedHash) {
-                hexString.append(String.format("%02x", b));
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error: SHA-256 Algorithm not found!", e);
-        }
+    @Override
+    public int getHolidayDays(int id){
+        throw new RuntimeException("Access denied");
     }
-
 }

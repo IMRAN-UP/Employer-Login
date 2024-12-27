@@ -9,7 +9,7 @@ public class LoginFrame extends JFrame {
 
     public LoginFrame() {
 
-        setTitle("Person Form");
+        setTitle("Login Form");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());

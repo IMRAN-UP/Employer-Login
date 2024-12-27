@@ -12,7 +12,7 @@ public class FormFrame extends JFrame {
     public FormFrame() {
         
         setTitle("Employer Platform");
-        setSize(900, 700);
+        setSize(1000, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
     
@@ -30,6 +30,11 @@ public class FormFrame extends JFrame {
 
     public HolidayPanel getHolidayPanel() {
         return holidayPanel;
+    }
+
+    public void handleAccess () {
+        employerPanel.handleAccess();
+        holidayPanel.handleAccess();
     }
 
 }

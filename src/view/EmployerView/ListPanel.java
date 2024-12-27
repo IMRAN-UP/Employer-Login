@@ -19,12 +19,13 @@ public class ListPanel extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new GridLayout(1, 5));
+        titlePanel.setLayout(new GridLayout(1, 6));
         titlePanel.add(createStyledLabel("Id"));
-        titlePanel.add(createStyledLabel("Nom"));
-        titlePanel.add(createStyledLabel("Prenom"));
+        titlePanel.add(createStyledLabel("Last name"));
+        titlePanel.add(createStyledLabel("First name"));
         titlePanel.add(createStyledLabel("Email"));
         titlePanel.add(createStyledLabel("Salaire"));
+        titlePanel.add(createStyledLabel("Days Left"));
         titlePanel.setBorder(new LineBorder(Color.BLACK));
         add(titlePanel, BorderLayout.NORTH);
 
@@ -39,7 +40,7 @@ public class ListPanel extends JPanel {
         rowPanels.clear();
 
         for (Employer employer : employers) {
-            JPanel rowPanel = new JPanel(new GridLayout(1, 5));
+            JPanel rowPanel = new JPanel(new GridLayout(1, 6));
             rowPanel.setBorder(new LineBorder(Color.GRAY));
             rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
@@ -48,6 +49,7 @@ public class ListPanel extends JPanel {
             JLabel firstNameLabel = createStyledLabel(employer.getFirstName());
             JLabel emailLabel = createStyledLabel(employer.getEmail());
             JLabel salaryLabel = createStyledLabel(String.valueOf(employer.getSalary()));
+            JLabel leftDaysLabel = createStyledLabel(String.valueOf(employer.getLeftDays()));
 
             rowPanel.addMouseListener(new MouseAdapter() {
                 @Override
@@ -61,6 +63,7 @@ public class ListPanel extends JPanel {
             rowPanel.add(firstNameLabel);
             rowPanel.add(emailLabel);
             rowPanel.add(salaryLabel);
+            rowPanel.add(leftDaysLabel);
 
             contentPanel.add(rowPanel);
             rowPanels.add(rowPanel);

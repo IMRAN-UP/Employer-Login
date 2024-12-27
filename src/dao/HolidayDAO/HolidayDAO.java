@@ -7,17 +7,14 @@ import model.*;
 import enums.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.io.*;
 
 public class HolidayDAO implements InterfaceDAO<Holiday> {
 
     private Connection connection;
 
     public HolidayDAO() {
-        try {
-            connection = DBConnection.getConnection();
-        } catch (SQLException connectionException) {
-            connectionException.printStackTrace();
-        }
+        this.connection = DBConnection.getConnection();
     }
 
     @Override
@@ -123,6 +120,48 @@ public class HolidayDAO implements InterfaceDAO<Holiday> {
 
     @Override
     public boolean createLogin(int employee_id, String username, String password) {
+        throw new RuntimeException("Access denied");
+    }
+
+    @Override
+    public List<Holiday> getByName(String name) {
+        throw new RuntimeException("Access denied");
+    }
+
+    @Override
+    public List<Holiday> getByDates(LocalDate start_date, LocalDate end_date) {
+        List<Holiday> Holidays = new ArrayList<>();
+
+
+        try (PreparedStatement getStatement = connection.prepareStatement("SELECT * FROM employer_holidays WHERE start_date >= ? AND end_date <= ?")) {
+            getStatement.setDate(1, java.sql.Date.valueOf(start_date));
+            getStatement.setDate(2, java.sql.Date.valueOf(end_date));
+            ResultSet getResult = getStatement.executeQuery();
+
+            while (getResult.next()) {
+                Holidays.add(new Holiday(
+                    getResult.getInt("holiday_id"), 
+                    getResult.getInt("employer_id"), 
+                    getResult.getString("first_name") + " " + getResult.getString("last_name"), 
+                    LocalDate.parse(getResult.getString("start_date")), 
+                    LocalDate.parse(getResult.getString("end_date")), 
+                    HolidayType.valueOf(getResult.getString("holiday_type"))
+                ));
+            }
+
+        } catch (SQLException getException) {
+            getException.printStackTrace();
+        }
+        return Holidays;
+    }
+
+    @Override
+    public int importData(File filepath) throws IOException {
+        throw new RuntimeException("Access denied");
+    }
+
+    @Override
+    public void exportData(File filepath) throws IOException {
         throw new RuntimeException("Access denied");
     }
 }

@@ -18,8 +18,6 @@ public class HolidayLogic {
 
         int days =  dao.getHolidayDays(employer_id);
         if (days == -1) return false;
-
-        System.out.println("days: " + days);
         if (getDateDifferenceInDays(startDate, endDate) > days) return false;
 
         return dao.add( new Holiday(
@@ -38,8 +36,6 @@ public class HolidayLogic {
 
         int days =  dao.getHolidayDays(employer_id);
         if (days == -1) return false;
-
-        System.out.println("days: " + days);
         if (getDateDifferenceInDays(startDate, endDate) > days) return false;
 
         return dao.update(new Holiday(
@@ -69,5 +65,9 @@ public class HolidayLogic {
 
     private int getDateDifferenceInDays(LocalDate startDate, LocalDate endDate) {
         return (int) java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate);
-    }   
+    } 
+
+    public List<Holiday> getHolidayByDates(LocalDate startDate, LocalDate endDate) {
+        return dao.getByDates(startDate, endDate);
+    }
 }

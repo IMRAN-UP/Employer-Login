@@ -6,17 +6,23 @@ import java.awt.*;
 public class HolidayPanel extends JPanel {
 
     private HoliInputPanel inPanel;
-    private HoliBtnPanel btnPanel;
+    private BtnPanel btnPanel;
     private HoliListPanel listPanel;
+    private HolidaySearchPanel searchPanel;
 
     public HolidayPanel() {
         setLayout(new BorderLayout());
 
         inPanel = new HoliInputPanel();
-        btnPanel = new HoliBtnPanel();
+        btnPanel = new BtnPanel(new String[] {"Add", "Update", "Remove", "Load"});
         listPanel = new HoliListPanel();
+        JPanel tmpPanel = new JPanel();
+        searchPanel = new HolidaySearchPanel();
+        tmpPanel.setLayout(new BorderLayout());
+        tmpPanel.add(inPanel, BorderLayout.CENTER);
+        tmpPanel.add(searchPanel, BorderLayout.NORTH);
 
-        add(inPanel, BorderLayout.NORTH);
+        add(tmpPanel, BorderLayout.NORTH);
         add(listPanel, BorderLayout.CENTER);
         add(btnPanel, BorderLayout.SOUTH);
         JScrollPane scrollPane = new JScrollPane(listPanel);
@@ -28,11 +34,20 @@ public class HolidayPanel extends JPanel {
         return inPanel;
     }
 
-    public HoliBtnPanel getBtnPanel() {
+    public BtnPanel getBtnPanel() {
         return btnPanel;
     }
 
     public HoliListPanel getListPanel() {
         return listPanel;
+    }
+
+    public HolidaySearchPanel getSearchPanel() {
+        return searchPanel;
+    }
+
+    public void handleAccess () {
+        removeAll();
+        add(listPanel);
     }
 }

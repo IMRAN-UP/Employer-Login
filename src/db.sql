@@ -1,3 +1,4 @@
+-- Active: 1730574430233@@127.0.0.1@5432@testjava
 -- Drop existing tables and views
 DROP TABLE IF EXISTS holidays;
 DROP TABLE IF EXISTS "login";
@@ -57,6 +58,8 @@ FROM
 JOIN 
     holidays h ON e.id = h.employer_id;
 
+SELECT * FROM employer_holidays;
+
 -- Insert a test employer
 INSERT INTO employers (first_name, last_name, email, phone, salary, role, poste, holiday_number)
 VALUES ('John_Doe', 'Smith', 'johndoe@email.com', '0909090909', 200.00, 'MANAGER', 'DEVELOPEUR', 25);
@@ -105,4 +108,16 @@ FOR EACH ROW
 EXECUTE FUNCTION update_holiday_number();
 
 
+DROP FUNCTION IF EXISTS update_holiday_number;
+DROP TRIGGER IF EXISTS update_holiday_number_trigger ON holidays; 
+
+
 SELECT * FROM employers;
+
+INSERT INTO employers (first_name, last_name, email, phone, salary, role, poste, holiday_number)
+VALUES ('imrane', 'errafi', 'johndo@email.com', '0909090909', 200.00, 'MANAGER', 'DEVELOPEUR', 25);
+
+
+
+SELECT * FROM holidays;
+SELECT * FROM employer_holidays WHERE start_date >= '2024-12-01' AND end_date <= '2024-12-25';

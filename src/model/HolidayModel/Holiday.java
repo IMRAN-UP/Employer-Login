@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class Holiday {
     
-    private int id, employerId;
+    private int id, employerId, daysLeft;
     private String fullName;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -18,6 +18,7 @@ public class Holiday {
         this.startDate = startDate;
         this.endDate = endDate;
         this.holidayType = holidayType;
+        this.daysLeft = daysLeft;
     }
 
     public int getId() {
@@ -42,17 +43,5 @@ public class Holiday {
 
     public HolidayType getHolidayType() {
         return holidayType;
-    }
-
-    @Override
-    public String toString() {
-        return "Holiday{" +
-                "id=" + id +
-                ", employerId=" + employerId +
-                ", fullName='" + fullName + '\'' +
-                ", startDate=" + startDate + '\'' +
-                ", endDate=" + endDate + '\'' +
-                ", holidayType=" + holidayType +
-                '}';
     }
 }

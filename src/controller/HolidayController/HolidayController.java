@@ -16,9 +16,11 @@ public class HolidayController {
         this.holidayLogic = holidayLogic;
         this.frame = frame;
 
-        frame.getHolidayPanel().getBtnPanel().getAddBtn().addActionListener(addEvent -> addHoliday());
-        frame.getHolidayPanel().getBtnPanel().getUpdateBtn().addActionListener(updateEvent -> updateHoliday());
-        frame.getHolidayPanel().getBtnPanel().getRemoveBtn().addActionListener(deleteEvent -> deleteHoliday());
+        frame.getHolidayPanel().getBtnPanel().getButtonByLabel("Add").addActionListener(addEvent -> addHoliday());
+        frame.getHolidayPanel().getBtnPanel().getButtonByLabel("Update").addActionListener(updateEvent -> updateHoliday());
+        frame.getHolidayPanel().getBtnPanel().getButtonByLabel("Remove").addActionListener(deleteEvent -> deleteHoliday());
+        frame.getHolidayPanel().getBtnPanel().getButtonByLabel("Load").addActionListener(createEvent -> loadHolidays());
+        frame.getHolidayPanel().getSearchPanel().getSearchButton().addActionListener(getByDates -> getHolidayByDates());
         loadHolidays();
     }
 
@@ -82,5 +84,9 @@ public class HolidayController {
 
     private void loadHolidays() {
         frame.getHolidayPanel().getListPanel().updateHolidayList(holidayLogic.getAllHolidays());
+    }
+
+    private void getHolidayByDates() {
+        frame.getHolidayPanel().getListPanel().updateHolidayList(holidayLogic.getHolidayByDates(frame.getHolidayPanel().getSearchPanel().getStartDateSearchField(),frame.getHolidayPanel().getSearchPanel().getEndDateSearchField()));
     }
 }

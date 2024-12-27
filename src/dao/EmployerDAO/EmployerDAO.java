@@ -6,17 +6,15 @@ import java.util.List;
 import model.Employer;
 import enums.Role;
 import enums.Poste;
+import java.time.LocalDate;
+import java.io.*;
 
 public class EmployerDAO implements InterfaceDAO<Employer> {
 
     private Connection connection;
 
     public EmployerDAO() {
-        try {
-            connection = DBConnection.getConnection();
-        } catch (SQLException connectionException) {
-            connectionException.printStackTrace();
-        }
+        connection = DBConnection.getConnection();
     }
 
     @Override
@@ -36,8 +34,9 @@ public class EmployerDAO implements InterfaceDAO<Employer> {
 
         } catch (SQLException addException) {
             addException.printStackTrace();
-            return false;
         }
+
+        return false;
     }
 
     @Override
@@ -57,8 +56,9 @@ public class EmployerDAO implements InterfaceDAO<Employer> {
 
         } catch (SQLException updateException) {
             updateException.printStackTrace();
-            return false;
         }
+
+        return false;
     }
 
     @Override
@@ -70,8 +70,9 @@ public class EmployerDAO implements InterfaceDAO<Employer> {
 
         } catch (SQLException deleteException) {
             deleteException.printStackTrace();
-            return false;
         }
+
+        return false;
     }
 
     @Override
@@ -88,7 +89,8 @@ public class EmployerDAO implements InterfaceDAO<Employer> {
                     getResult.getInt("phone"), 
                     getResult.getDouble("salary"), 
                     Role.valueOf(getResult.getString("role")), 
-                    Poste.valueOf(getResult.getString("poste"))
+                    Poste.valueOf(getResult.getString("poste")),
+                    getResult.getInt("holiday_number")
                 ));
             }
 
@@ -147,5 +149,85 @@ public class EmployerDAO implements InterfaceDAO<Employer> {
     @Override
     public int getHolidayDays(int id){
         throw new RuntimeException("Access denied");
+    }
+
+
+    @Override
+    public List<Employer> getByName(String username) {
+        List<Employer> employers = new ArrayList<Employer>();
+        try (PreparedStatement getEmployerStatement = connection.prepareStatement("SELECT * FROM employers WHERE first_name = ? OR last_name = ?" )) {
+            getEmployerStatement.setString(1, username);
+            getEmployerStatement.setString(2, username);
+            ResultSet getResult = getEmployerStatement.executeQuery();
+
+            while (getResult.next()) {
+                employers.add(new Employer(
+                    getResult.getInt("id"), 
+                    getResult.getString("first_name"), 
+                    getResult.getString("last_name"), 
+                    getResult.getString("email"), 
+                    getResult.getInt("phone"), 
+                    getResult.getDouble("salary"), 
+                    Role.valueOf(getResult.getString("role")), 
+                    Poste.valueOf(getResult.getString("poste")),
+                    getResult.getInt("holiday_number")
+                ));
+            }
+        }catch (SQLException getException){
+            getException.printStackTrace();
+        }
+
+        return employers;
+    }
+
+    @Override
+    public List<Employer> getByDates(LocalDate startDate, LocalDate endDate) {
+        throw new RuntimeException("Access denied");
+    }
+
+    @Override
+    public int importData(File file) throws IOException {
+        try ( BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            int counter = 0;
+            while ((line = reader.readLine())!= null) {
+                String[] values = line.split(",");
+                if(add(new Employer(
+                    Integer.parseInt(values[0]),
+                    values[1],
+                    values[2],
+                    values[3],
+                    Integer.parseInt(values[4]),
+                    Double.parseDouble(values[5]),
+                    Role.valueOf(values[6]),
+                    Poste.valueOf(values[7]),
+                    Integer.parseInt(values[8])
+                ))) {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+    } 
+
+
+    @Override
+    public void exportData(File file) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (Employer employer : getAll()) {
+                writer.write(
+                    employer.getId() + "," +
+                    employer.getFirstName() + "," +
+                    employer.getLastName() + "," +
+                    employer.getEmail() + "," +
+                    employer.getPhoneNumber() + "," +
+                    employer.getSalary() + "," +
+                    employer.getRole().name() + "," +
+                    employer.getPoste().name() + "," +
+                    employer.getLeftDays()
+                );
+                writer.newLine();
+            }
+        }
     }
 }

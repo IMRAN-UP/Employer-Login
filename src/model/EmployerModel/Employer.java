@@ -4,7 +4,7 @@ import enums.*;
 
 public class Employer {
 
-    private int id;
+    private int id, leftDays;
     private String firstName;
     private String lastName;
     private String email;
@@ -13,7 +13,7 @@ public class Employer {
     private Role role;    
     private Poste poste; 
 
-    public Employer(int id, String firstName, String lastName, String email, int phoneNumber, double salary, Role role, Poste poste) {
+    public Employer(int id, String firstName, String lastName, String email, int phoneNumber, double salary, Role role, Poste poste, int leftDays) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,6 +22,7 @@ public class Employer {
         this.salary = salary;
         this.role = role;
         this.poste = poste;
+        this.leftDays = leftDays;
     }
 
     public int getId() {
@@ -54,5 +55,9 @@ public class Employer {
 
     public Poste getPoste() {
         return poste;
+    }
+
+    public int getLeftDays() {
+        return leftDays;
     }
 }

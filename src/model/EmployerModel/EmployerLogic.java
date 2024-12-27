@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import enums.*;
 import dao.EmployerDAO;
 import java.util.List;
+import java.io.*;
 
 public class EmployerLogic {
 
@@ -32,7 +33,8 @@ public class EmployerLogic {
                 phoneNumber,
                 salary,
                 role,
-                poste
+                poste,
+                25
         ));
     }
 
@@ -49,7 +51,8 @@ public class EmployerLogic {
                 phoneNumber,
                 salary,
                 role,
-                poste
+                poste,
+                25
             ));
         }
 
@@ -93,6 +96,10 @@ public class EmployerLogic {
         return dao.getAll();
     }
 
+    public List<Employer> getEmployerByName(String name) {
+        return dao.getByName(name);
+    }
+
     private static String hashPassword(String password) {
         try {
             byte[] encodedHash = MessageDigest.getInstance("SHA-256").digest(password.getBytes());
@@ -104,5 +111,13 @@ public class EmployerLogic {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error: SHA-256 Algorithm not found!", e);
         }
+    }
+
+    public int importData(File file) throws IOException {
+        return dao.importData(file);
+    }
+
+    public void exportData(File file) throws IOException {
+        dao.exportData(file);
     }
 }
